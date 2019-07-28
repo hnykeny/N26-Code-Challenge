@@ -2,7 +2,6 @@ package com.n26.controller;
 
 import com.n26.dto.StatsDto;
 import com.n26.dto.TransactionDto;
-import com.n26.exception.OldTransactionException;
 import com.n26.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,17 +24,10 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/transactions")
-    public ResponseEntity addTransaction(@RequestBody TransactionDto transactionDto) {
-        try {
-            this.transactionService.saveTransaction(transactionDto);
-            return new ResponseEntity(HttpStatus.CREATED);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY);
-        } catch (OldTransactionException e) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        }
+    @PostMapping(value = "/transactions", consumes = "application/json")
+    public ResponseEntity addTransaction(@RequestBody TransactionDto transactionDto) throws ParseException {
+        this.transactionService.saveTransaction(transactionDto);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @GetMapping("/statistics")

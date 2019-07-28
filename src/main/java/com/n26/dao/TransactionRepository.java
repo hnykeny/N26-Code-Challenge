@@ -5,9 +5,10 @@ import com.n26.model.TransactionModel;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.MathContext;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,22 +16,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TransactionRepository {
     private static final ConcurrentHashMap<UUID, TransactionModel> datastore = new ConcurrentHashMap<>();
     private static final StatModel stats = new StatModel();
+    private static final MathContext mathContext = new MathContext(10);
 
     public synchronized void addTransaction(TransactionModel transactionModel) {
         datastore.put(transactionModel.getId(), transactionModel);
 
-        stats.setSum(stats.getSum().add(new BigDecimal(transactionModel.getAmount())));
+        stats.setSum(stats.getSum().add(BigDecimal.valueOf(transactionModel.getAmount()), mathContext));
         stats.setCount(stats.getCount() + 1L);
-        stats.setAvg(stats.getSum().divide(BigDecimal.valueOf(stats.getCount()), 2, RoundingMode.HALF_UP));
+        stats.setAvg(stats.getSum().divide(BigDecimal.valueOf(stats.getCount()), mathContext));
         updateMinMaxStats();
     }
 
     public synchronized void removeTransaction(UUID id) {
         TransactionModel transactionModel = datastore.remove(id);
-        stats.setSum(stats.getSum().subtract(new BigDecimal(transactionModel.getAmount())));
-        stats.setCount(stats.getCount() - 1L);
-        stats.setAvg(stats.getSum().divide(BigDecimal.valueOf(stats.getCount()), 2, RoundingMode.HALF_UP));
-        updateMinMaxStats();
+        if (Objects.nonNull(transactionModel)) {
+            stats.setSum(stats.getSum().subtract(BigDecimal.valueOf(transactionModel.getAmount()), mathContext));
+            stats.setCount(stats.getCount() - 1L);
+            stats.setAvg(stats.getSum().divide(BigDecimal.valueOf(stats.getCount()), mathContext));
+            updateMinMaxStats();
+        }
     }
 
     public synchronized void removeAll() {

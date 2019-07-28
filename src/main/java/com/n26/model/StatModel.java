@@ -25,10 +25,10 @@ public class StatModel {
     }
 
     public void resetStats() {
-        this.sum = BigDecimal.valueOf(0.00D);
-        this.avg = BigDecimal.valueOf(0.00D);
-        this.max = BigDecimal.valueOf(0.00D);
-        this.min = BigDecimal.valueOf(0.00D);
+        this.sum = BigDecimal.valueOf(0);
+        this.avg = BigDecimal.valueOf(0);
+        this.max = BigDecimal.valueOf(0);
+        this.min = BigDecimal.valueOf(0);
         this.count = 0L;
     }
 }
