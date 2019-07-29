@@ -26,6 +26,7 @@ This endpoint is called to create a new transaction.
 }
 ```
 **Where:**
+
 | Parameter | Description |
 | :--- | :--- |
 | `amount` |  transaction amount; a string of arbitrary length that is parsable as a BigDecimal  |
