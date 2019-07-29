@@ -55,6 +55,7 @@ This endpoint returns the statistics computed on the transactions within the las
 }
 ```
 **Where:**
+
 | Parameter | Description |
 | :--- | :--- |
 | `sum` |  a BigDecimal specifying the total sum of transaction value in the last 60 seconds  |
